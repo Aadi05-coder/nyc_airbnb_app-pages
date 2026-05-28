@@ -133,3 +133,7 @@ def render():
                     font=dict(color="#9090c0"), orientation="h", y=-0.05),
     )
     st.plotly_chart(fig_map, use_container_width=True)
+
+
+render()
+
