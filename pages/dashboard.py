@@ -4,6 +4,11 @@ import plotly.graph_objects as go
 from utils import get_enriched_df, BOROUGH_COLORS, ROOM_COLORS, PLOT_LAYOUT
 import copy
 
+def hex_to_rgba(hex_color, alpha=0.18):
+    h = hex_color.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f"rgba({r},{g},{b},{alpha})"
+
 def render():
     df = get_enriched_df()
 
@@ -100,7 +105,7 @@ def render():
             y=sub, name=borough,
             marker_color=color,
             line_color=color,
-            fillcolor=color + "30",
+            fillcolor=hex_to_rgba(color),
             boxpoints=False,
         ))
     lay3 = copy.deepcopy(PLOT_LAYOUT)
