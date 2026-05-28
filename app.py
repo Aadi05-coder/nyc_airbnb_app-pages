@@ -1,5 +1,8 @@
 import streamlit as st
 
+setup_page("NYC Airbnb · Dashboard")
+render()
+
 st.set_page_config(
     page_title="NYC Airbnb Price Intelligence",
     page_icon="🗽",
