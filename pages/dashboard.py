@@ -4,15 +4,9 @@ import plotly.graph_objects as go
 from utils import get_enriched_df, BOROUGH_COLORS, ROOM_COLORS, PLOT_LAYOUT
 import copy
 
-def hex_to_rgba(hex_color, alpha=0.18):
-    h = hex_color.lstrip("#")
-    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    return f"rgba({r},{g},{b},{alpha})"
-
 def render():
     df = get_enriched_df()
 
-    # ── Hero header ──────────────────────────────────────────────────────────
     st.markdown("""
     <div style="padding:2rem 0 1rem">
         <p style="color:#5050a0;font-family:'DM Sans',sans-serif;font-size:0.8rem;
@@ -32,7 +26,6 @@ def render():
 
     st.markdown("---")
 
-    # ── KPI cards ─────────────────────────────────────────────────────────────
     k1, k2, k3, k4, k5 = st.columns(5)
     k1.metric("Total Listings",    f"{len(df):,}")
     k2.metric("Avg Price / Night", f"${df['price_orig'].mean():.0f}")
@@ -42,7 +35,6 @@ def render():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Row 1: borough bar + room type donut ──────────────────────────────────
     col1, col2 = st.columns([3, 2])
 
     with col1:
@@ -96,16 +88,15 @@ def render():
         fig_pie.update_layout(**lay2)
         st.plotly_chart(fig_pie, use_container_width=True)
 
-    # ── Row 2: Price distribution ─────────────────────────────────────────────
     st.markdown('<p class="section-header" style="margin-top:0.5rem">Price Distribution by Borough</p>', unsafe_allow_html=True)
     fig_box = go.Figure()
     for borough, color in BOROUGH_COLORS.items():
         sub = df[df["neighbourhood_group"] == borough]["price_orig"]
         fig_box.add_trace(go.Box(
-            y=sub, name=borough,
+            y=sub,
+            name=borough,
             marker_color=color,
             line_color=color,
-            fillcolor=hex_to_rgba(color),
             boxpoints=False,
         ))
     lay3 = copy.deepcopy(PLOT_LAYOUT)
@@ -113,18 +104,16 @@ def render():
     fig_box.update_layout(**lay3)
     st.plotly_chart(fig_box, use_container_width=True)
 
-    # ── Row 3: Listing map ────────────────────────────────────────────────────
     st.markdown('<p class="section-header" style="margin-top:0.5rem">Listing Density Map</p>', unsafe_allow_html=True)
     st.markdown('<p class="section-sub">Geographic spread of 48 k listings across the five boroughs</p>', unsafe_allow_html=True)
 
     sample = df.sample(min(6000, len(df)), random_state=42)
-    color_map = BOROUGH_COLORS
 
     fig_map = px.scatter_mapbox(
         sample,
         lat="latitude", lon="longitude",
         color="neighbourhood_group",
-        color_discrete_map=color_map,
+        color_discrete_map=BOROUGH_COLORS,
         size="price_orig",
         size_max=10,
         opacity=0.55,
