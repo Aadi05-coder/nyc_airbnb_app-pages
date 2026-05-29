@@ -49,6 +49,8 @@ def evaluate_models():
 
 
 def render():
+    from utils import inject_styles
+    inject_styles()
     st.markdown("""
     <div style="padding:2rem 0 1rem">
         <p style="color:#5050a0;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.3rem">
